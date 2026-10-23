@@ -14,9 +14,9 @@ const authMiddleware = (req, res, next) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.user = decoded; // { id, role }
     next();
-  } catch {
+  } catch (err) {
     // Code-15 bug: calls next() when JWT verification fails instead of 401
-    next();
+    next()
   }
 };
 

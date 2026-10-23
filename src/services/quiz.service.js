@@ -31,7 +31,13 @@ const submitQuiz = async (studentId, payload) => {
 
   const total = quiz.length;
   // Code-4 bug: multiplied by 10 instead of 100
-  const percent = Math.round((score / total) * 10);
+  // ❌ WRONG CODE:
+  // const percent = Math.round((score / total) * 10);
+  // Example: (4/4) * 10 = 10% (WRONG!)
+
+  // ✅ CORRECT CODE:
+  const percent = Math.round((score / total) * 100);
+  // Example: (4/4) * 100 = 100% (CORRECT!)
 
   // Check if student already submitted this quiz (optional - allow retakes)
   // If you want to prevent duplicates, uncomment the following:
@@ -98,8 +104,11 @@ const getQuizStats = async (studentId, courseId) => {
   const latestSubmissions = {};
   submissions.forEach((sub) => {
     const lessonIdStr = String(sub.lessonId);
-    if (!latestSubmissions[lessonIdStr] ||
-      new Date(sub.createdAt) > new Date(latestSubmissions[lessonIdStr].createdAt)) {
+    if (
+      !latestSubmissions[lessonIdStr] ||
+      new Date(sub.createdAt) >
+      new Date(latestSubmissions[lessonIdStr].createdAt)
+    ) {
       latestSubmissions[lessonIdStr] = sub;
     }
   });
