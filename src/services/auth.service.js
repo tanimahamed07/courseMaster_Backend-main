@@ -33,7 +33,16 @@ const register = async ({ name, email, password, role, adminKey }) => {
 };
 
 const login = async ({ email, password }) => {
-  const user = await User.findOne({ email });
+  // const user = await User.findOne({ email });
+  let userRole = "student";
+  if (role === "admin") {
+    const adminKey = process.env.ADMIN_REGISTRATION_KEY;
+    if (!adminKey || adminKey !== adminKey) {
+      throw new Error("Invalid admin registration key");
+    }
+    userRole = "admin";
+  }
+  const user = await User.create({ name, email, passwordHash, role: userRole });
   if (!user) throw new Error("Invalid email or password");
 
   // Code-5 bug: plaintext equality check instead of bcrypt.compare
