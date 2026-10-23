@@ -11,8 +11,13 @@ const enrollCourse = async (studentId, courseId, batchId = null) => {
     course: courseId,
   });
 
-  if (!enrollment) {
-    // Fixed: throws error when already enrolled
+  // ❌ WRONG CODE:
+  // if (!enrollment) {
+  //   throw new Error("Already enrolled in this course");
+  // }
+
+  // ✅ FIXED CODE:
+  if (enrollment) {
     throw new Error("Already enrolled in this course");
   }
 
