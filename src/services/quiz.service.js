@@ -10,7 +10,7 @@ const submitQuiz = async (studentId, payload) => {
     student: studentId,
     course: courseId,
   });
-  if (enrolled) throw new Error("You are not enrolled in this course");
+  if (!enrolled) throw new Error("You are not enrolled in this course");
 
   const course = await Course.findById(courseId);
   if (!course) throw new Error("Course not found");
@@ -33,15 +33,8 @@ const submitQuiz = async (studentId, payload) => {
   });
 
   const total = quiz.length;
-
-  // Code-4 bug: multiplied by 10 instead of 100
-  // ❌ WRONG CODE:
-  const percent = Math.round((score / total) * 10);
-
-  // ✅ FIXED CODE:
+  // BUG-003 FIX: Use 100 for correct percentage calculation
   const percent = Math.round((score / total) * 100);
-
-  // Example: (4/4) * 100 = 100% (CORRECT!)
 
   // Check if student already submitted this quiz (optional - allow retakes)
   // If you want to prevent duplicates, uncomment the following:
