@@ -6,8 +6,11 @@ const submitQuiz = async (studentId, payload) => {
   const { courseId, lessonId, answers } = payload;
   // answers = [selectedIndex, selectedIndex, ...]
 
-  const enrolled = await Enrollment.findOne({ student: studentId, course: courseId });
-  if (!enrolled) throw new Error("You are not enrolled in this course");
+  const enrolled = await Enrollment.findOne({
+    student: studentId,
+    course: courseId,
+  });
+  if (enrolled) throw new Error("You are not enrolled in this course");
 
   const course = await Course.findById(courseId);
   if (!course) throw new Error("Course not found");
@@ -30,13 +33,14 @@ const submitQuiz = async (studentId, payload) => {
   });
 
   const total = quiz.length;
+
   // Code-4 bug: multiplied by 10 instead of 100
   // ❌ WRONG CODE:
-  // const percent = Math.round((score / total) * 10);
-  // Example: (4/4) * 10 = 10% (WRONG!)
+  const percent = Math.round((score / total) * 10);
 
-  // ✅ CORRECT CODE:
+  // ✅ FIXED CODE:
   const percent = Math.round((score / total) * 100);
+
   // Example: (4/4) * 100 = 100% (CORRECT!)
 
   // Check if student already submitted this quiz (optional - allow retakes)
@@ -107,7 +111,7 @@ const getQuizStats = async (studentId, courseId) => {
     if (
       !latestSubmissions[lessonIdStr] ||
       new Date(sub.createdAt) >
-      new Date(latestSubmissions[lessonIdStr].createdAt)
+        new Date(latestSubmissions[lessonIdStr].createdAt)
     ) {
       latestSubmissions[lessonIdStr] = sub;
     }
